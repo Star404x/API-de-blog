@@ -50,6 +50,36 @@ function createComment(payload, currentUser) {
   };
 }
 
+function getAllComments(query) {
+  let page = parseInt(query.page, 10) || 1;
+  let limit = parseInt(query.limit, 10) || 5;
+
+  if (page < 1) page = 1;
+  if (limit < 1) limit = 5;
+  if (limit > 100) limit = 100;
+
+  const total = comments.length;
+  const totalPages = Math.ceil(total / limit) || 1;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+
+  const paginatedComments = comments.slice(startIndex, endIndex);
+
+  return {
+    status: 200,
+    data: {
+      message: "Liste des commentaires",
+      data: paginatedComments,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    },
+  };
+}
+
 function getCommentById(commentId) {
   const comment = comments.find((comment) => comment.id === commentId);
 

@@ -30,18 +30,38 @@ function getProfile(decodedUser) {
   };
 }
 
-function getAllUsers() {
+function getAllUsers(query) {
+  let page = parseInt(query.page, 10) || 1;
+  let limit = parseInt(query.limit, 10) || 5;
+
+  if (page < 1) page = 1;
+  if (limit < 1) limit = 5;
+  if (limit > 100) limit = 100;
+
   const safeUsers = users.map((user) => ({
     id: user.id,
     email: user.email,
     role: user.role,
   }));
 
+  const total = safeUsers.length;
+  const totalPages = Math.ceil(total / limit) || 1;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+
+  const paginatedUsers = safeUsers.slice(startIndex, endIndex);
+
   return {
     status: 200,
     data: {
       message: "Liste des utilisateurs",
-      users: safeUsers,
+      data: paginatedUsers,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
     },
   };
 }

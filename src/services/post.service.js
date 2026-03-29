@@ -1,20 +1,28 @@
 const posts = require("../data/posts.store");
+const paginate = require("../utils/paginate");
 
 function createPost(payload, currentUser) {
   const { title, content, category } = payload;
 
-  if (!title || !content) {
+  if (!title || !String(title).trim()) {
     return {
       status: 400,
-      data: { message: "Titre et contenu requis" },
+      data: { message: "Titre requis" },
+    };
+  }
+
+  if (!content || !String(content).trim()) {
+    return {
+      status: 400,
+      data: { message: "Contenu requis" },
     };
   }
 
   const newPost = {
     id: posts.length + 1,
-    title,
-    content,
-    category: category || null,
+    title: title.trim(),
+    content: content.trim(),
+    category: category ? String(category).trim() : null,
     authorId: currentUser.userId,
     authorEmail: currentUser.email,
     createdAt: new Date(),
@@ -32,12 +40,15 @@ function createPost(payload, currentUser) {
   };
 }
 
-function getAllPosts() {
+function getAllPosts(query) {
+  const result = paginate(posts, query.page, query.limit);
+
   return {
     status: 200,
     data: {
-      message: "liste des articles",
-      posts,
+      message: "Liste des articles",
+      data: result.data,
+      meta: result.meta,
     },
   };
 }
@@ -83,15 +94,27 @@ function updatePost(postId, payload, currentUser) {
   const { title, content, category } = payload;
 
   if (title !== undefined) {
-    post.title = title;
+    if (!String(title).trim()) {
+      return {
+        status: 400,
+        data: { message: "Le titre ne peut pas etre vide" },
+      };
+    }
+    post.title = String(title).trim();
   }
 
   if (content !== undefined) {
-    post.content = content;
+    if (!String(content).trim()) {
+      return {
+        status: 400,
+        data: { message: "Le contenu ne peut pas etre vide" },
+      };
+    }
+    post.content = String(content).trim();
   }
 
   if (category !== undefined) {
-    post.category = category;
+    post.category = category ? String(category).trim() : null;
   }
 
   post.updateAt = new Date();

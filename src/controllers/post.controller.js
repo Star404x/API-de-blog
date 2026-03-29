@@ -6,7 +6,7 @@ function createPost(req, res) {
 }
 
 function getAllPosts(req, res) {
-  const result = postService.getAllPosts();
+  const result = postService.getAllPosts(req.query);
   return res.status(result.status).json(result.data);
 }
 

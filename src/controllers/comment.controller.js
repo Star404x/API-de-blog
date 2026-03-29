@@ -6,7 +6,7 @@ function createComment(req, res) {
 }
 
 function getAllComments(req, res) {
-  const result = commentService.getAllComments();
+  const result = commentService.getAllComments(req.query);
   return res.status(result.status).json(result.data);
 }
 

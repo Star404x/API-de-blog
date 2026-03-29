@@ -11,7 +11,7 @@ function profile(req, res) {
 }
 
 function getAllUsers(req, res) {
-  const result = userService.getAllUsers();
+  const result = userService.getAllUsers(req.query);
   return res.status(result.status).json(result.data);
 }
 
