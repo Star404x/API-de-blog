@@ -1,3 +1,4 @@
+const paginate = require("../utils/paginate");
 const users = require("../data/users.store");
 
 function getMe(userId) {
@@ -31,12 +32,7 @@ function getProfile(decodedUser) {
 }
 
 function getAllUsers(query) {
-  let page = parseInt(query.page, 10) || 1;
-  let limit = parseInt(query.limit, 10) || 5;
-
-  if (page < 1) page = 1;
-  if (limit < 1) limit = 5;
-  if (limit > 100) limit = 100;
+  const search = query.search ? String(query.search).trim().toLowerCase() : "";
 
   const safeUsers = users.map((user) => ({
     id: user.id,
@@ -44,24 +40,28 @@ function getAllUsers(query) {
     role: user.role,
   }));
 
-  const total = safeUsers.length;
-  const totalPages = Math.ceil(total / limit) || 1;
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
+  let filteredUsers = safeUsers;
 
-  const paginatedUsers = safeUsers.slice(startIndex, endIndex);
+  if (search) {
+    filteredUsers = sageUsers.filter((user) => {
+      const email = user.email ? user.email.toLowerCase() : "";
+      const role = user.role ? user.role.toLowerCase() : "";
+
+      return email.includes(search) || role.includes(search);
+    });
+  }
+
+  const result = paginate(filteredUsers, query.page, query.limit);
 
   return {
     status: 200,
     data: {
       message: "Liste des utilisateurs",
-      data: paginatedUsers,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages,
+      filters: {
+        search: search || null,
       },
+      data: result.data,
+      meta: result.meta,
     },
   };
 }

@@ -41,12 +41,33 @@ function createPost(payload, currentUser) {
 }
 
 function getAllPosts(query) {
-  const result = paginate(posts, query.page, query.limit);
+  const search = query.search ? String(query.search).trim().toLowerCase() : "";
+
+  let filteredPosts = posts;
+
+  if (search) {
+    filteredPosts = posts.filter((post) => {
+      const title = post.title ? post.title.toLowerCase() : "";
+      const content = post.content ? post.content.toLowerCase() : "";
+      const category = post.category ? post.category.toLowerCase() : "";
+
+      return (
+        title.includes(search) ||
+        content.includes(search) ||
+        category.includes(search)
+      );
+    });
+  }
+
+  const result = paginate(filtredPosts, query.page, query.limit);
 
   return {
     status: 200,
     data: {
       message: "Liste des articles",
+      filters: {
+        search: search || null,
+      },
       data: result.data,
       meta: result.meta,
     },

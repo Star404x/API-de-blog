@@ -1,3 +1,4 @@
+const paginate = require("../utils/paginate");
 const comments = require("../data/comments.store");
 const posts = require("../data/posts.store");
 
@@ -51,31 +52,28 @@ function createComment(payload, currentUser) {
 }
 
 function getAllComments(query) {
-  let page = parseInt(query.page, 10) || 1;
-  let limit = parseInt(query.limit, 10) || 5;
+  const search = query.search ? String(query.search).trim().toLowerCase() : "";
 
-  if (page < 1) page = 1;
-  if (limit < 1) limit = 5;
-  if (limit > 100) limit = 100;
+  let filteredComments = comments;
 
-  const total = comments.length;
-  const totalPages = Math.ceil(total / limit) || 1;
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
+  if (search) {
+    filteredComments = comments.filter((comment) => {
+      const content = comment.content ? comment.content.toLowerCase() : "";
+      return content.includes(search);
+    });
+  }
 
-  const paginatedComments = comments.slice(startIndex, endIndex);
+  const result = paginate(filteredComments, query.page, query.limit);
 
   return {
     status: 200,
     data: {
       message: "Liste des commentaires",
-      data: paginatedComments,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages,
+      filters: {
+        search: search || null,
       },
+      data: result.data,
+      meta: result.meta,
     },
   };
 }
