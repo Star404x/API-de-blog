@@ -25,7 +25,7 @@ function updateCategory(req, res) {
 function deleteCategory(req, res) {
   const categoryId = parseInt(req.params.id, 10);
   const result = categoryService.deleteCategory(categoryId);
-  return res.status(result.stauts).json(result.data);
+  return res.status(result.status).json(result.data);
 }
 
 module.exports = {

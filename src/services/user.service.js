@@ -43,7 +43,7 @@ function getAllUsers(query) {
   let filteredUsers = safeUsers;
 
   if (search) {
-    filteredUsers = sageUsers.filter((user) => {
+    filteredUsers = safeUsers.filter((user) => {
       const email = user.email ? user.email.toLowerCase() : "";
       const role = user.role ? user.role.toLowerCase() : "";
 

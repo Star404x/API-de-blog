@@ -17,6 +17,6 @@ app.use(authRoutes);
 app.use(userRoutes);
 app.use(postRoutes);
 app.use(commentRoutes);
-app.user(categoryRoutes);
+app.use(categoryRoutes);
 
 module.exports = app;

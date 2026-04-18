@@ -67,7 +67,7 @@ function getAllCategories() {
 function getCategoryById(categoryId) {
   const category = categories.find((category) => category.id === categoryId);
 
-  if (!Category) {
+  if (!category) {
     return {
       status: 404,
       data: {

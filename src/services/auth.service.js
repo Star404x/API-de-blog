@@ -10,6 +10,14 @@ async function register({ email, password }) {
     };
   }
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return {
+      status: 400,
+      data: { message: "Email invalide" },
+    };
+  }
+
   const existingUser = users.find((user) => user.email === email);
   if (existingUser) {
     return {
@@ -21,10 +29,10 @@ async function register({ email, password }) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = {
-    id: users.length + 1,
+    id: Date.now(),
     email,
     password: hashedPassword,
-    role: email === "admin@mail.com" ? "admin" : "user",
+    role: "user",
   };
 
   users.push(newUser);
@@ -56,6 +64,16 @@ async function login({ email, password }) {
     return {
       status: 401,
       data: { message: "Email ou mot de passe incorrect" },
+    };
+  }
+
+  if (!process.env.JWT_SECRET) {
+    console.error("JWT_SECRET manquant");
+    return {
+      status: 500,
+      data: {
+        message: "Erreur serveur",
+      },
     };
   }
 

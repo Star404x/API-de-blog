@@ -59,7 +59,7 @@ function getAllPosts(query) {
     });
   }
 
-  const result = paginate(filtredPosts, query.page, query.limit);
+  const result = paginate(filteredPosts, query.page, query.limit);
 
   return {
     status: 200,
@@ -102,7 +102,7 @@ function updatePost(postId, payload, currentUser) {
     };
   }
 
-  const isOwner = post.quthorId === currentUser.user.Id;
+  const isOwner = post.authorId === currentUser.userId;
   const isAdmin = currentUser.role === "admin";
 
   if (!isOwner && !isAdmin) {
@@ -138,7 +138,7 @@ function updatePost(postId, payload, currentUser) {
     post.category = category ? String(category).trim() : null;
   }
 
-  post.updateAt = new Date();
+  post.updatedAt = new Date();
 
   return {
     status: 200,
@@ -154,14 +154,14 @@ function deletePost(postId, currentUser) {
 
   if (postIndex === -1) {
     return {
-      status: 400,
+      status: 404,
       data: { message: "Article introuvable" },
     };
   }
 
   const post = posts[postIndex];
   const isOwner = post.authorId === currentUser.userId;
-  const IsAdmin = currentUser.role === "admin";
+  const isAdmin = currentUser.role === "admin";
 
   if (!isOwner && !isAdmin) {
     return {

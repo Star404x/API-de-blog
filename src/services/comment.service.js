@@ -14,7 +14,7 @@ function createComment(payload, currentUser) {
 
   const numericPostId = parseInt(postId, 10);
 
-  if (Number.isNan(numericPostId)) {
+  if (Number.isNaN(numericPostId)) {
     return {
       status: 400,
       data: { message: "postId invalide" },
@@ -116,7 +116,7 @@ function getCommentsByPostId(postId) {
 }
 
 function updateComment(commentId, payload, currentUser) {
-  const comment = comments.find((coment) => comment.id === commentId);
+  const comment = comments.find((comment) => comment.id === commentId);
 
   if (!comment) {
     return {
@@ -141,7 +141,7 @@ function updateComment(commentId, payload, currentUser) {
     comment.content = content;
   }
 
-  comment.updateAt = new Date();
+  comment.updatedAt = new Date();
 
   return {
     status: 200,
